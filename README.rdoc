@@ -1,0 +1,54 @@
+= burpdot
+
+burpdot is a quickly hacked together Ruby script to convert Burp log files into simple Graphviz DOT files.
+
+Download the ruby file and run with:
+
+  ./burpdot.rb -i burplogfile.log -o burp.dot
+
+You can then process these files into graphic files using Graphviz tools, such as neato or sfdp:
+
+  sfdp -v -Tpng -O burp.dot
+
+I've had most luck with sfdp, as I've had neato freeze up on me, or take an extraordinary amount of time. You can read more about these tools here:
+
+  http://www.graphviz.org/
+
+== Options
+
+If you don't specify an -o option, burpdot will simply print out the DOT file. This allows you to quickly confirm that it contains data you want, or perhaps you want to pipe it through another command line tool.
+
+The other important option, at this time, is the -l option. The -l option, or Overlap mode, specifies the Graphviz method for ensuring that nodes within the visualisation do not overlap. By default, the dot file is set for orthoyx, which means that overlaps are moved by optimizing two constraint problems, one for the y axis and one for the x. There are other options available for overlap removal, which you can review here:
+
+  http://www.graphviz.org/doc/info/attrs.html#d:overlap
+
+== History
+
+This is version 0.1 of burpdot, released on the 19th of March 2011.
+
+== License
+
+   Copyright 2011 Christian Frichot
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+== Other links
+
+Burp Suite is available from:
+
+  http://www.portswigger.net/
+
+You can contact Christian at:
+
+  http://un-excogitate.org/
+  https://twitter.com/xntrik
