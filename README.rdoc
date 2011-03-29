@@ -10,9 +10,19 @@ You can then process these files into graphic files using Graphviz tools, such a
 
   sfdp -v -Tpng -O burp.dot
 
+The alternative is to just pipe the output of burpdot directly into Graphviz:
+
+  ./burpdot.rb -i burplogfile.log | sfdp -v -Tpng -o burp.png
+
 I've had most luck with sfdp, as I've had neato freeze up on me, or take an extraordinary amount of time. You can read more about these tools here:
 
   http://www.graphviz.org/
+
+With the new "csv" mode you can pipe burpdot's output through afterglow into graphviz (using the supplied burp.properties color file):
+
+  ./burpdot.rb -i burplogfile.log -m csv | ./afterglow.pl -t -c burp.properties | neato -v -Tpng -Goverlap=orthoyx -o burp.png
+
+Because overlap settings aren't set by afterglow, I've specified them using the -G option.
 
 == Options
 
@@ -22,9 +32,17 @@ The other important option, at this time, is the -l option. The -l option, or Ov
 
   http://www.graphviz.org/doc/info/attrs.html#d:overlap
 
+Burpdot now has 2 primary modes of operation, either output directly to a DOT file (with very limited formatting), or output as a "ref,url" CSV file. This is particular important for parsing these files with Afterglow. Mode is specified by the -m option. By default the option is "dot", but if you specify "csv" then a CSV is either printed to the screen or saved to a file (with the -o option). If the mode is set to CSV then the overlap option (-l) is ignored. You can download and read more about Afterglow here:
+
+  http://afterglow.sourceforge.net/
+
 == History
 
-This is version 0.1 of burpdot, released on the 19th of March 2011.
+Version 0.2 of burpdot, released on the 29th of March 2011.
+ - Now has "mode" option, either set to "dot" or "csv"
+ - Comes with a simple "burp.properties" color file for Afterglow
+
+Version 0.1 of burpdot, released on the 19th of March 2011.
 
 == License
 
@@ -56,3 +74,4 @@ You can contact Christian at:
 
   http://un-excogitate.org/
   https://twitter.com/xntrik
+

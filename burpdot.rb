@@ -2,7 +2,7 @@
 require 'optparse'
 
 #Version and licensing gumpft
-verstring = "Version 0.1 - 19th March, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring = "Version 0.2 - 29th March, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
 verstring += "Copyright 2011 Christian Frichot\n\n"
 verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 verstring += "you may not use this file except in compliance with the License.\n"
