@@ -29,6 +29,8 @@ class OptsConsole
         puts
         puts "Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'"
         puts "See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information"
+        puts
+        puts "If mode is set to \"csv\" then overlap is ignored"
         exit
       end
 
@@ -40,8 +42,12 @@ class OptsConsole
         options['overlap'] = l
       end
       
-      opts.on("-o", "-o <output dot file>", "Output: The output DOT file") do |o|
+      opts.on("-o", "-o <output file>", "Output: The output file") do |o|
         options['output'] = o
+      end
+
+      opts.on("-m", "-m <mode>", "Mode: either dot or csv. Defaults to dot") do |m|
+        options['mode'] = m
       end
 
       opts.on("-v", "--version", "Show version") do |v|
@@ -61,6 +67,7 @@ class OptsConsole
       end
       
       options['overlap'] = "orthoyx" if options['overlap'].nil?
+      options['mode'] = 'dot' if options['mode'].nil?
 
     rescue OptionParser::InvalidOption
       puts "Invalid option, try -h for usage"
@@ -83,10 +90,12 @@ entries = [] #An array of entrys (gah! Plural singular assplosion!)
 
 #We open the file backwards, because this way we can build up the entry easier, in particular the referer
 File.open(options['input'], 'r').readlines.reverse.each do |line|
-  entry['ref'] = line.match(/^Referer: https?:\/\/([^? ]*)/i)[1].chomp.scan(/.{1,50}/).join('\n') if line =~ /^Referer:/i #Get the ref
+  entry['ref'] = line.match(/^Referer: https?:\/\/([^? ]*)/i)[1].chomp if line =~ /^Referer:/i #Get the ref
   entry['host'] = line.match(/^Host: (.*)/i)[1].chomp if line =~ /^Host:/i #Get the host
   if line =~ /^GET /i #At this point, we're at the top of that log entry, so wrap it up and put it in the array
-    entry['url'] = line.match(/^GET ([^? ]*)/i)[1].scan(/.{1,50}/).join('\n')
+    entry['url'] = line.match(/^GET ([^? ]*)/i)[1]
+    entry['url'] = entry['url'].scan(/.{1,50}/).join('\n') if options['mode'] == "dot" and not entry['url'].nil?
+    entry['ref'] = entry['ref'].scan(/.{1,50}/).join('\n') if options['mode'] == "dot" and not entry['ref'].nil?
     entries << entry
     entry = {}
   end
@@ -100,22 +109,34 @@ entries.uniq!
 
 #output
 oFile = File.new(options['output'],'w') if not options['output'].nil?
-if oFile
-  oFile.syswrite("digraph Burp {\nnode [shape=rect]\n")
-else
-  print "digraph Burp {\nnode [shape=rect]\n"
+if options['mode'] == "dot"
+  if oFile
+    oFile.syswrite("digraph Burp {\nnode [shape=rect]\n")
+  else
+    print "digraph Burp {\nnode [shape=rect]\n"
+  end
 end
 entries.each do |line|
   if oFile
-    oFile.syswrite("\"" + line['ref'].to_s + "\"->") if not line['ref'].nil?
-    oFile.syswrite("\"" + line['host'].to_s + line['url'].to_s + "\"\n")
+    if options['mode'] == "dot"
+      oFile.syswrite("\"" + line['ref'].to_s + "\"->") if not line['ref'].nil?
+      oFile.syswrite("\"" + line['host'].to_s + line['url'].to_s + "\"\n")
+    elsif options['mode'] == "csv"
+      oFile.syswrite(line['ref'].to_s + "," + line['host'].to_s + line['url'].to_s + "\n") if not line['ref'].nil?
+    end
   else
-    print "\"" + line['ref'].to_s + "\"->" if not line['ref'].nil?
-    print "\"" + line['host'].to_s + line['url'].to_s + "\"\n"
+    if options['mode'] == "dot"
+      print "\"" + line['ref'].to_s + "\"->" if not line['ref'].nil?
+      print "\"" + line['host'].to_s + line['url'].to_s + "\"\n"
+    elsif options['mode'] == "csv"
+      print line['ref'].to_s + "," + line['host'].to_s + line['url'].to_s + "\n" if not line['ref'].nil?
+    end
   end
 end
-if oFile
-  oFile.syswrite("\noverlap=" + options['overlap'] + "\n}\n")
-else
-  print "\noverlap=" + options['overlap'] + "\n}\n"
+if options['mode'] == "dot"
+  if oFile
+    oFile.syswrite("\noverlap=" + options['overlap'] + "\n}\n")
+  else
+    print "\noverlap=" + options['overlap'] + "\n}\n"
+  end
 end
