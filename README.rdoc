@@ -36,6 +36,23 @@ Burpdot now has 2 primary modes of operation, either output directly to a DOT fi
 
   http://afterglow.sourceforge.net/
 
+== Usage
+
+	Usage: ./burpdot.rb [options]
+
+	Specific Options:
+	    -h, --help                       Show help
+	    -i <burp log file>               Input: The Burp Log File
+	    -l <overlap mode>                Overlap: DOT file overlap mode. Defaults to 'orthoyx'
+	    -o <output file>                 Output: The output file
+	    -m <mode>                        Mode: either dot or csv. Defaults to dot
+	    -v, --version                    Show version
+
+	Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'
+	See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information
+
+	If mode is set to "csv" then overlap is ignored
+
 == History
 
 Version 0.3 of burpdot, released on the 31st of March 2011.
