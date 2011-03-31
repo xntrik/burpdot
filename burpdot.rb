@@ -1,8 +1,10 @@
 #!/usr/bin/ruby
 require 'optparse'
+require 'lib/import'
+require 'lib/output'
 
 #Version and licensing gumpft
-verstring = "Version 0.2 - 29th March, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring = "Version 0.3 - 31st March, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
 verstring += "Copyright 2011 Christian Frichot\n\n"
 verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 verstring += "you may not use this file except in compliance with the License.\n"
@@ -68,6 +70,7 @@ class OptsConsole
       
       options['overlap'] = "orthoyx" if options['overlap'].nil?
       options['mode'] = 'dot' if options['mode'].nil?
+      options['truncate'] = 1 if options['mode'] == "dot"
 
     rescue OptionParser::InvalidOption
       puts "Invalid option, try -h for usage"
@@ -85,21 +88,7 @@ if options['version']
   exit
 end
 
-entry = {} #An entry hash, includes a host, url, and referer
-entries = [] #An array of entrys (gah! Plural singular assplosion!)
-
-#We open the file backwards, because this way we can build up the entry easier, in particular the referer
-File.open(options['input'], 'r').readlines.reverse.each do |line|
-  entry['ref'] = line.match(/^Referer: https?:\/\/([^? ]*)/i)[1].chomp if line =~ /^Referer:/i #Get the ref
-  entry['host'] = line.match(/^Host: (.*)/i)[1].chomp if line =~ /^Host:/i #Get the host
-  if line =~ /^GET /i #At this point, we're at the top of that log entry, so wrap it up and put it in the array
-    entry['url'] = line.match(/^GET ([^? ]*)/i)[1]
-    entry['url'] = entry['url'].scan(/.{1,50}/).join('\n') if options['mode'] == "dot" and not entry['url'].nil?
-    entry['ref'] = entry['ref'].scan(/.{1,50}/).join('\n') if options['mode'] == "dot" and not entry['ref'].nil?
-    entries << entry
-    entry = {}
-  end
-end
+entries = Burpdot::Import.importburplog(options['input'],options['truncate'])
 
 #sort the entries by host, then url
 entries = entries.sort_by {|a| [a['host'], a['url']]}
@@ -107,36 +96,11 @@ entries = entries.sort_by {|a| [a['host'], a['url']]}
 #get rid of duplicates
 entries.uniq!
 
-#output
-oFile = File.new(options['output'],'w') if not options['output'].nil?
+#Depending on the mode, we'll use a different output class
 if options['mode'] == "dot"
-  if oFile
-    oFile.syswrite("digraph Burp {\nnode [shape=rect]\n")
-  else
-    print "digraph Burp {\nnode [shape=rect]\n"
-  end
+  out = Burpdot::Output::Dotout.new(entries,options)
+elsif options['mode'] == "csv"
+  out = Burpdot::Output::Csvout.new(entries,options)
 end
-entries.each do |line|
-  if oFile
-    if options['mode'] == "dot"
-      oFile.syswrite("\"" + line['ref'].to_s + "\"->") if not line['ref'].nil?
-      oFile.syswrite("\"" + line['host'].to_s + line['url'].to_s + "\"\n")
-    elsif options['mode'] == "csv"
-      oFile.syswrite(line['ref'].to_s + "," + line['host'].to_s + line['url'].to_s + "\n") if not line['ref'].nil?
-    end
-  else
-    if options['mode'] == "dot"
-      print "\"" + line['ref'].to_s + "\"->" if not line['ref'].nil?
-      print "\"" + line['host'].to_s + line['url'].to_s + "\"\n"
-    elsif options['mode'] == "csv"
-      print line['ref'].to_s + "," + line['host'].to_s + line['url'].to_s + "\n" if not line['ref'].nil?
-    end
-  end
-end
-if options['mode'] == "dot"
-  if oFile
-    oFile.syswrite("\noverlap=" + options['overlap'] + "\n}\n")
-  else
-    print "\noverlap=" + options['overlap'] + "\n}\n"
-  end
-end
+
+out.run #Run the output (d'uh)

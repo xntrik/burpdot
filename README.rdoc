@@ -38,6 +38,11 @@ Burpdot now has 2 primary modes of operation, either output directly to a DOT fi
 
 == History
 
+Version 0.3 of burpdot, released on the 31st of March 2011.
+ - The burpdot.rb file should function identically to 0.2
+ - Split out some of the logic into separate modules, files, classes etc
+ - This is primarily to allow for future output extensions, such as databases
+
 Version 0.2 of burpdot, released on the 29th of March 2011.
  - Now has "mode" option, either set to "dot" or "csv"
  - Comes with a simple "burp.properties" color file for Afterglow
