@@ -4,7 +4,7 @@ require 'lib/import'
 require 'lib/output'
 
 #Version and licensing gumpft
-verstring = "Version 0.3 - 31st March, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring = "Version 0.4 - 7th of April, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
 verstring += "Copyright 2011 Christian Frichot\n\n"
 verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 verstring += "you may not use this file except in compliance with the License.\n"
@@ -32,7 +32,7 @@ class OptsConsole
         puts "Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'"
         puts "See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information"
         puts
-        puts "If mode is set to \"csv\" then overlap is ignored"
+        puts "Overlap is only used in \"dot\" mode."
         exit
       end
 
@@ -40,7 +40,7 @@ class OptsConsole
         options['input'] = i
       end
 
-      opts.on("-l", "-l <overlap mode>", "Overlap: DOT file overlap mode. Defaults to 'orthoyx'") do |l|
+      opts.on("-l", "-l <overlap mode>", "Overlap: DOT file overlap mode. Defaults to 'vpsc'") do |l|
         options['overlap'] = l
       end
       
@@ -48,12 +48,16 @@ class OptsConsole
         options['output'] = o
       end
 
-      opts.on("-m", "-m <mode>", "Mode: either dot or csv. Defaults to dot") do |m|
+      opts.on("-m", "-m <mode>", "Mode: either dot, csv or sqlite. Defaults to dot") do |m|
         options['mode'] = m
       end
 
       opts.on("-v", "--version", "Show version") do |v|
         options['version'] = true
+      end
+      
+      opts.on("-d", "-d <depth>", "Depth: 1, 2 or 3. Defaults to 2") do |d|
+        options['depth'] = d
       end
 
     end
@@ -68,9 +72,10 @@ class OptsConsole
         exit
       end
       
-      options['overlap'] = "orthoyx" if options['overlap'].nil?
-      options['mode'] = 'dot' if options['mode'].nil?
-      options['truncate'] = 1 if options['mode'] == "dot"
+      options['overlap'] = "vpsc" if options['overlap'].nil? #Default overlap is orthoyx
+      options['mode'] = 'dot' if options['mode'].nil? #Default output mode is dot
+      options['truncate'] = 1 if options['mode'] == "dot" #Therefore, default mode is to truncate. i.e. incl \ns every 50 chars.
+      options['depth'] = 2 if options['depth'].nil? #Defaults to 2
 
     rescue OptionParser::InvalidOption
       puts "Invalid option, try -h for usage"
@@ -88,7 +93,7 @@ if options['version']
   exit
 end
 
-entries = Burpdot::Import.importburplog(options['input'],options['truncate'])
+entries = Burpdot::Import.importburplog(options)
 
 #sort the entries by host, then url
 entries = entries.sort_by {|a| [a['host'], a['url']]}
@@ -101,6 +106,8 @@ if options['mode'] == "dot"
   out = Burpdot::Output::Dotout.new(entries,options)
 elsif options['mode'] == "csv"
   out = Burpdot::Output::Csvout.new(entries,options)
+elsif options['mode'] == "sqlite"
+  out = Burpdot::Output::Sqliteout.new(entries,options)
 end
 
 out.run #Run the output (d'uh)

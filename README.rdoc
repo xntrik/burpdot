@@ -20,21 +20,31 @@ I've had most luck with sfdp, as I've had neato freeze up on me, or take an extr
 
 With the new "csv" mode you can pipe burpdot's output through afterglow into graphviz (using the supplied burp.properties color file):
 
-  ./burpdot.rb -i burplogfile.log -m csv | ./afterglow.pl -t -c burp.properties | neato -v -Tpng -Goverlap=orthoyx -o burp.png
+  ./burpdot.rb -i burplogfile.log -m csv | ./afterglow.pl -t -c burp.properties | \
+  neato -v -Tpng -Gnormalize=true -Gsplines=true -Goverlap=vpsc -o burp.png
 
 Because overlap settings aren't set by afterglow, I've specified them using the -G option. Afterglow requires the -t option because the CSV only has 2 columns instead of 3.
 
 == Options
 
-If you don't specify an -o option, burpdot will simply print out the DOT file. This allows you to quickly confirm that it contains data you want, or perhaps you want to pipe it through another command line tool.
+Mode
+Burpdot now has 3 primary modes of operation, either output in DOT syntax (with very limited formatting), or output in a "ref,url" CSV format, or output the data into a SQLite DB file. CSV mode is particular important for parsing these files with Afterglow. Mode is specified by the -m option. By default the option is "dot", but if you specify "csv" then a CSV is either printed to the screen or saved to a file (with the -o option), or "sqlite" (If you use sqlite, you MUST specify an output file with the -o option). If the mode is set to CSV then the overlap option (-l) is ignored. You can download and read more about Afterglow here:
 
-The other important option, at this time, is the -l option. The -l option, or Overlap mode, specifies the Graphviz method for ensuring that nodes within the visualisation do not overlap. By default, the dot file is set for orthoyx, which means that overlaps are moved by optimizing two constraint problems, one for the y axis and one for the x. There are other options available for overlap removal, which you can review here:
+  http://afterglow.sourceforge.net/
+
+Output
+If you don't specify an -o option, burpdot will simply print the output to screen. This allows you to quickly confirm that it contains data you want, or perhaps you want to pipe it through another command line tool, such as Afterglow.
+
+Overlap
+When in "dot" mode, you can also set the -l option. The -l option, or Overlap mode, specifies the Graphviz method for ensuring that nodes within the visualisation do not overlap. By default, the dot file is set for orthoyx, which means that overlaps are moved by optimizing two constraint problems, one for the y axis and one for the x. There are other options available for overlap removal, which you can review here:
 
   http://www.graphviz.org/doc/info/attrs.html#d:overlap
 
-Burpdot now has 2 primary modes of operation, either output directly to a DOT file (with very limited formatting), or output as a "ref,url" CSV file. This is particular important for parsing these files with Afterglow. Mode is specified by the -m option. By default the option is "dot", but if you specify "csv" then a CSV is either printed to the screen or saved to a file (with the -o option). If the mode is set to CSV then the overlap option (-l) is ignored. You can download and read more about Afterglow here:
-
-  http://afterglow.sourceforge.net/
+Depth
+You can specify the "depth" of data extracted from Burp's logs, setting the -d option to either 1, 2 or 3.
+Depth 1: Just extract domain information.
+Depth 2: Extract domain and path information (this is the default setting if no depth is specified)
+Depth 3: Extract domain, path and query string information.
 
 == Usage
 
@@ -45,15 +55,37 @@ Burpdot now has 2 primary modes of operation, either output directly to a DOT fi
 	    -i <burp log file>               Input: The Burp Log File
 	    -l <overlap mode>                Overlap: DOT file overlap mode. Defaults to 'orthoyx'
 	    -o <output file>                 Output: The output file
-	    -m <mode>                        Mode: either dot or csv. Defaults to dot
+	    -m <mode>                        Mode: either dot, csv or sqlite. Defaults to dot
 	    -v, --version                    Show version
+	    -d, -d <depth>                   Depth: 1, 2 or 3. Defaults to 2
 
 	Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'
 	See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information
 
-	If mode is set to "csv" then overlap is ignored
+	Overlap is only used in "dot" mode.
+	
+== Graphviz Tips
+
+So yeah, the Graphviz set of tools is quite the monster and I'm not going to pretend I understand it all. To get the best looking graphs, assuming you're going through Afterglow, I've had the most luck with the following incantations:
+
+  neato -v -Tpng -Gnormalize=true -Gsplines=true -o burp.png
+
+This gives you a fairly tight grouping of nodes, but you should be able to identify busy nodes quite easily.
+
+  neato -v -Tpng -Gnormalize=true -Gsplines=true -Goverlap=vpsc -o burp.png
+
+This uses the vpsc overlap mode, which seems to be good at keeping the graphic tight, but with minimal (if any) overlaps. This is still likely to generate large images though.
+
+In both of the above examples I've set splines to true, which makes the lines weave and look a bit nicer, you can get rid of that option if you wish.
 
 == History
+
+Version 0.4 of burpdot, released on 7th of April 2011.
+ - The import methods now capture the verb (GET or POST)
+ - New "depth" option
+ - Can output into an SQLite DB file
+ - Changed default "DOT" mode sort to vpsc
+ - Updated tips and tricks for overlapping optimisation (awesomeisation)
 
 Version 0.3 of burpdot, released on the 31st of March 2011.
  - The burpdot.rb file should function identically to 0.2
