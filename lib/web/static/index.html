@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BurpDot</title>
+	<link rel="stylesheet" href="/css/burpdot.css" type="text/css" media="screen" />
+</head>
+
+<body>
+<script src="/js/jquery-1.5.2.min.js"></script>
+<div id="centeredcontent">
+	<a class="button" id="selectburpfile">&nbsp;Select Burp File&nbsp;</a><br /><br />
+	<div id="selectlog"><form method="post" action="/logfile" enctype="multipart/form-data" id="logfileform"><input type="file" name="logfile" id="logfileinput" /><br /><br /></div>
+	<a class="button" id="existing">Or use existing db</a>
+</div>
+<script>
+$(document).ready(function() {
+	
+	//Select Burp File Button
+	$('#selectburpfile').click(function() {
+		if ($('#selectlog').is(':visible')) {
+			$('#selectlog').slideUp();
+		} else {
+			$('#selectlog').slideDown();
+		}
+	});
+	
+	//Select Burp File onChange event
+	$('#logfileinput').change(function() {
+		$('#logfileform').submit();
+	});
+});
+</script>
+</body>
+</html>
