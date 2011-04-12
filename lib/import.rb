@@ -30,10 +30,6 @@ class Import
   
   end
 
-  def self.importburpraw(options)
-
-  end
-
   #The importburpbase takes an array of burp log lines, reads it backwards, and spits out an array of entry hashes.
   #
   # All the parameters are included in the options hash

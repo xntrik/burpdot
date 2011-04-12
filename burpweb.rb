@@ -1,4 +1,9 @@
 #!/usr/bin/ruby
+
+$:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '.'))
+
+$root_dir = File.expand_path('..', __FILE__)
+
 require 'rubygems'
 require 'webrick'
 require 'dm-core'
@@ -6,7 +11,10 @@ require 'dm-migrations'
 require 'optparse'
 require 'parseconfig'
 
-require 'lib/web/burpfileupload'
+require 'lib/configuration'
+require 'lib/web'
+require 'lib/import'
+require 'lib/output'
 
 Socket.do_not_reverse_lookup = true
 
@@ -60,7 +68,7 @@ end
 options = OptsConsole.parse(ARGV)
 
 #Load the configuration file
-config = ParseConfig.new("burpweb.cfg")
+config = Burpdot::Configuration.instance
 
 if options['version']
   print verstring
@@ -69,8 +77,8 @@ end
 
 #Starting up the web interface
 httpconfig = {}
-httpconfig[:BindAddress] = "127.0.0.1"
-httpconfig[:Port] = "8015"
+httpconfig[:BindAddress] = config.get_value("burpip")
+httpconfig[:Port] = config.get_value("burpport")
 httpconfig[:Logger] = WEBrick::Log.new($stdout, WEBrick::Log::DEBUG)
 httpconfig[:ServerName] = "BurpDot"
 httpconfig[:ServerSoftware] = "BurpDot"
@@ -82,6 +90,9 @@ http_server.mount("/",WEBrick::HTTPServlet::FileHandler,"lib/web/static")
 
 #Mount the "burp log" file upload handler
 http_server.mount("/logfile",Burpdot::WebBurpFileUpload)
+
+#Mount the "status checker"
+http_server.mount("/status",Burpdot::StatusChecker)
 
 trap("INT") {
   puts "Quitting..."
