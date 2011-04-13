@@ -12,12 +12,20 @@
 <body>
 <script src="/js/jquery-1.5.2.min.js"></script>
 <div id="centeredcontent">
-	<a class="button" id="selectburpfile">&nbsp;Select Burp File&nbsp;</a><br /><br />
+	<a class="button" id="selectburpfile" style="display: none;">&nbsp;Select Burp File&nbsp;</a><br /><br />
 	<div id="selectlog"><form method="post" action="/logfile" enctype="multipart/form-data" id="logfileform"><input type="file" name="logfile" id="logfileinput" /><br /><br /></div>
-	<a class="button" id="existing">Or use existing db</a>
+	<a class="button" id="existing" style="display: none;">Or use existing db</a>
 </div>
 <script>
 $(document).ready(function() {
+	
+	$.getJSON('/status/db_exists.json', function(data) {
+		if (data['db_exists'] == "true") {
+			$('#existing').slideDown();
+		}
+	});
+
+	$('#selectburpfile').slideDown();
 	
 	//Select Burp File Button
 	$('#selectburpfile').click(function() {

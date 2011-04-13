@@ -13,8 +13,13 @@ class WebBurpFileUpload < WEBrick::HTTPServlet::AbstractServlet
     options['input'] = filedata.split("\n")
     options['output'] = config.get_value('burpdbfile')
     output = Burpdot::Import.importburpbase(options)
+
+    output = output.sort_by {|a| [a['host'], a['url']]}
+
+    output.uniq!
     
     out = Burpdot::Output::Sqliteout.new(output,options)
+    out.run
 
     #res.body = ""
     #raise WEBrick::HTTPStatus::OK    
