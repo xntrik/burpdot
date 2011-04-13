@@ -18,21 +18,14 @@ class Sqliteout < BaseOutput
     end
     
     #Only now do we require this code
-    require 'rubygems'
-    require 'dm-core'
-    require 'dm-migrations'
-    require 'lib/model/weblog'
+    require 'lib/sqlite'
     
     #Setup the object variables - note the oFile is NOT a normal file now
     @entries = entries
     @options = options
     @oFile = Dir.pwd + "/" + options['output'] #oFile is a SQLite ref, not a file to be opened now
     
-    #DataMapper::Logger.new($stdout, :debug) #For debugging you can uncomment this
-    
-    DataMapper.setup(:default,"sqlite://"+@oFile) #Setup the SQLite DB file
-    
-    DataMapper.finalize #After the models have been declared (up in lib/model/weblog) you finalise
+    @sqlite = Burpdot::Sqlite.new(@oFile) #This sets up the database
     
     DataMapper.auto_migrate! #This clears the db file and creates the files.
     

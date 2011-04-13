@@ -6,8 +6,8 @@ $root_dir = File.expand_path('..', __FILE__)
 
 require 'rubygems'
 require 'webrick'
-require 'dm-core'
-require 'dm-migrations'
+#require 'dm-core'
+#require 'dm-migrations'
 require 'optparse'
 require 'parseconfig'
 
@@ -93,6 +93,9 @@ http_server.mount("/logfile",Burpdot::WebBurpFileUpload)
 
 #Mount the "status checker"
 http_server.mount("/status",Burpdot::StatusChecker)
+
+#Mount the "db"
+http_server.mount("/db",Burpdot::Db)
 
 trap("INT") {
   puts "Quitting..."
