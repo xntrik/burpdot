@@ -11,30 +11,28 @@
 
 <body>
 <script src="/js/jquery-1.5.2.min.js"></script>
+<script src="/js/jquery.jstree.js"></script>
+<div id="urltreeparent">
+<div id="urltreelink">URLs</div>
+<div id="urltree" style="display: none;">
+</div>
+</div>
 <script>
 $(document).ready(function() {
-	
-	$.getJSON('/status/db_exists.json', function(data) {
-		if (data['db_exists'] == "true") {
-			$('#existing').slideDown();
-		}
-	});
+	$.get("/db/prettyul.html", function(data) {
+		//print out the data
+		$("#urltree").html(data);
+		$("#urltree").jstree({
+			"plugins" : [ "themes", "html_data", "checkbox", "types" ]
+		});
 
-	$('#selectburpfile').slideDown();
-	
-	//Select Burp File Button
-	$('#selectburpfile').click(function() {
-		if ($('#selectlog').is(':visible')) {
-			$('#selectlog').slideUp();
-		} else {
-			$('#selectlog').slideDown();
-		}
+	}, "html");
+
+	$("#urltreelink").click(function() {
+		$("#urltreeparent").css("width","600px");
+		$("#urltree").slideDown();
 	});
 	
-	//Select Burp File onChange event
-	$('#logfileinput').change(function() {
-		$('#logfileform').submit();
-	});
 });
 </script>
 </body>

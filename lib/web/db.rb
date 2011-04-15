@@ -31,7 +31,7 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
     require 'builder'
     urlArray = []
     @db.all.each do |entry|
-      urlArray << entry.url.to_s
+      urlArray << entry.url
     end
     
     auto_hash = Hash.new { |h,k| h[k] = Hash.new &h.default_proc }
@@ -40,20 +40,28 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
       sub = auto_hash
       path.split("/").each{ |dir| sub[dir]; sub = sub[dir] }
     end
-    
+   
+    @somecounter = 1
+ 
     def build_branch(branch,xml)
       directories = branch.keys.reject{|k| branch[k].empty?}.sort
       leaves = branch.keys.select{|k| branch[k].empty?}.sort
       
       directories.each do |directory|
-        xml.li(:class => 'folder') << "<a href=\"#\">" + directory + "</a>\n"
-        xml.ul do
-          build_branch(branch[directory], xml)
-        end
+	xml.li(:id => "phtml_"+@somecounter.to_s) do
+          xml.a(directory, "href"=>"#")
+          @somecounter = @somecounter + 1
+          xml.ul do
+            build_branch(branch[directory], xml)
+          end
+	end
       end
       
       leaves.each do |leaf|
-        xml.li(:class => 'leaf') << "<a href=\"#\">" + leaf + "</a>\n"
+	xml.li(:id => "phtml_"+@somecounter.to_s) do
+          xml.a(leaf, "href"=>"#")
+        end
+        @somecounter = @somecounter + 1
       end
     end
     
