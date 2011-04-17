@@ -7,31 +7,225 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>BurpDot</title>
 	<link rel="stylesheet" href="/css/burpdot.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="/css/jquery.svg.css" type="text/css" />
 </head>
 
 <body>
 <script src="/js/jquery-1.5.2.min.js"></script>
 <script src="/js/jquery.jstree.js"></script>
-<div id="urltreeparent">
-<div id="urltreelink">URLs</div>
-<div id="urltree" style="display: none;">
+<script src="/js/jquery.svg.min.noConflict.js"></script>
+<script src="/js/jquery.svganim.min.noConflict.js"></script>
+<script src="/js/jquery.mousewheel.min.js"></script>
+
+<div id="urltreeparent" style="display:none;">
+	<div id="urltreelink"><a href="#">URLs</a></div>
+	<div id="urltree" style="display: none;"></div>
+	<div id="urltreego">go</div>
 </div>
+<div id="depthparent" style="display:none;">
+	<div id="depthlink"><a href="#">Depth</a></div>
+	<div id="depthcontent" style="display: none;">
+		<div id="testbutton">test</div>
+	</div>
+</div>
+<div id="jquerysvg"></div>
+<div style="position: relative;">
+Zoom Level:<span id="zoomLevel"></span>&nbsp;X:<span id="xPosition"></span>&nbsp;Y:<span id="yPosition"></span>&nbsp;Width:<span id="width"></span>&nbsp;Height:<span id="height"></span>
 </div>
 <script>
 $(document).ready(function() {
-	$.get("/db/prettyul.html", function(data) {
+	$.get("/db/prettyullite.html", function(data) {
 		//print out the data
 		$("#urltree").html(data);
 		$("#urltree").jstree({
 			"plugins" : [ "themes", "html_data", "checkbox", "types" ]
 		});
+		$("#urltreeparent").show();
+		$("#depthparent").show();
 
 	}, "html");
 
 	$("#urltreelink").click(function() {
-		$("#urltreeparent").css("width","600px");
-		$("#urltree").slideDown();
+		if ($("#urltree").is(':visible')) {
+			$("#urltree").slideUp(400,function() {
+				$("#urltreeparent").css("width","60px");
+				});
+		} else {
+			$("#urltreeparent").css("width","600px");
+			$("#urltree").slideDown();
+		}
 	});
+	
+	$("#depthlink").click(function() {
+		if ($("#depthcontent").is(':visible')) {
+			$("#depthcontent").slideUp(400,function() {
+				$("#depthparent").css("width","60px");
+			});
+		} else {
+			$("#depthparent").css("width","600px");
+			$("#depthcontent").slideDown();
+		}
+	});
+	
+	$("#urltreego").click(function() {
+		//$("#urltree").jstree("check_all");
+		//alert($("#urltree").jstree("get_checked"));
+		//$.each($("#urltree").jstree("get_checked"), function(index,value) {
+		//	alert(value['type']);
+		//});
+		
+		var datastring = $(".jstree-checked").map(function() {
+			if (this.id.length > 0) {
+				return this.id;
+			}
+		}).get().join(',');
+		
+		//first we push the data into a csv file
+		$.ajax({
+			type: "POST",
+			url: "/db/dbdumptocsv",
+			data: "select=" + datastring,
+			success: function() { //upon success, we now push that into an svg file
+				$.ajax({
+					type: "GET",
+					url: "/crunch/csvtosvg.json",
+					success: function() { // now we load that svg file into the jQuery SVG object
+						loadSVGJQuery();
+					}
+				});
+			}
+		});
+	});
+	
+	//
+	//This is all the CRAZY svg stuff from that site
+	//
+	$('#jquerysvg').svg();
+	
+	$('#jquerysvg').mousedown(function(e){ 
+      if (e.preventDefault){
+        e.preventDefault();}
+      mousedown = true;
+      $(this).toggleClass("grab", false);
+      $(this).toggleClass("grabbing", true);
+    });
+
+    $('#jquerysvg').mouseup(function(e){  
+      mousedown = false;
+      $(this).toggleClass("grabbing", false);
+      $(this).toggleClass("grab", true);
+    });
+
+    $('#jquerysvg').mousemove(function(e){
+      if (e.preventDefault){
+        e.preventDefault();}
+      var oldMouseX = mouseX;
+      var oldMouseY = mouseY;
+      mouseX = e.pageX - this.offsetLeft;
+  	  mouseY = e.pageY - this.offsetTop;
+
+      if(mousedown && oldMouseX != 0 && oldMouseY != 0){        
+        svgViewBox['x'] -= (mouseX - oldMouseX)*zoomLevel;
+        svgViewBox['y'] -= (mouseY - oldMouseY)*zoomLevel;
+        constructViewBox();
+      }
+    });
+
+    $('#jquerysvg').mouseout(function(e){ 
+      mouseX = 0;
+      mouseY = 0;
+    });
+
+    $('#jquerysvg').mouseover(function(e){ 
+      if (e.preventDefault){
+        e.preventDefault();}
+      if(!mousedown){
+        $(this).toggleClass("grabbing", false);
+        $(this).toggleClass("grab", true);
+      }
+    });
+
+    $('#jquerysvg').mousewheel(function(e,delta){
+      if(delta < 0){
+        zoomOut(Math.abs(delta*0.1)+1);
+      }else{
+        zoomIn(Math.abs(delta*0.1)+1);
+      }
+    });
+
+  function zoomOut(amount){
+    if((1/(zoomLevel*amount)) >= 0.1){    
+      zoomLevel *= amount;
+      oldHeight = svgViewBox['height']
+      svgViewBox['height'] *= amount
+      svgViewBox['y'] -= (svgViewBox['height'] - oldHeight)/2;
+
+      oldWidth = svgViewBox['width']
+      svgViewBox['width'] *= amount
+      svgViewBox['x'] -= (svgViewBox['width'] - oldWidth)/2;
+
+      constructViewBox(1);
+    }else{
+      constructViewBox(1);
+    }
+  }
+
+  function zoomIn(amount){
+    zoomLevel /= amount;
+
+    oldHeight = svgViewBox['height']
+    svgViewBox['height'] /= amount
+    svgViewBox['y'] += (oldHeight - svgViewBox['height'])/2;
+
+    oldWidth = svgViewBox['width']
+    svgViewBox['width'] /= amount
+    svgViewBox['x'] += (oldWidth - svgViewBox['width'])/2;
+
+    constructViewBox(1); 
+  }
+	
+	var zoomLevel = 1;
+	var mousedown = false;
+	var mouseX = 0;
+	var mouseY = 0;
+	var params = {};
+	var svgViewBox = {};
+	
+	function constructViewBox(time){
+	    if(time == null){
+	      time = 1;
+	    }
+
+	    var svg = $('#jquerysvg').svg('get');
+	    params['svgViewBox'] = 
+	      svgViewBox['x'].toString() + ", " + 
+	      svgViewBox['y'].toString() + ", " + 
+	      svgViewBox['width'].toString() + ", " + 
+	      svgViewBox['height'].toString();
+	    $(svg._svg).animate(params, time); 
+
+	    $('#zoomLevel').html((1/zoomLevel).toFixed(1).toString());
+	    $('#xPosition').html((svgViewBox['x']).toFixed(0).toString());
+	    $('#yPosition').html((svgViewBox['y']).toFixed(0).toString());
+	    $('#width').html((svgViewBox['width']).toFixed(0).toString());
+	    $('#height').html((svgViewBox['height']).toFixed(0).toString());
+	 }
+	
+	function loadSVGJQuery(){
+    var svg = $('#jquerysvg').svg('get');
+
+	svg.load("/crunch/getsvg.html", {addTo: false, changeSize: false});
+
+    svg.configure({viewBox: '0, 0, 800, 600'});
+    svgViewBox = {x: 0, y: 0, width: 800, height:600};
+    zoomLevel = 1;
+    //constructViewBox(1000);
+  }
+
+	$("#testbutton").click(function() {
+		loadSVGJQuery();
+	});
+	
 	
 });
 </script>

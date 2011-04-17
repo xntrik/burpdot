@@ -14,10 +14,35 @@ body {
 	width: 60px;
 	top: 40px;
 	border: 1px dashed black;
+	z-index: 500;
 }
 #urltree {
 	position: relative;
 }
+
+#depthcontent {
+	position: relative;
+}
+
+#depthparent {
+	position: relative;
+	width: 60px;
+	top: 50px;
+	border: 1px dashed black;
+	z-index: 500;
+}
+
+#jquerysvg {
+	position: absolute;
+	left: 80px;
+	top: 35px;
+	width: 800px;
+	height: 600px;
+	border: 1px solid #484;
+}
+
+.grab {cursor: all-scroll;}
+.grabbing {cursor: all-scroll;}
 
 #centeredcontent {
 	width: 300px;

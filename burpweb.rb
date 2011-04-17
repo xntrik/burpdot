@@ -97,6 +97,9 @@ http_server.mount("/status",Burpdot::StatusChecker)
 #Mount the "db"
 http_server.mount("/db",Burpdot::Db)
 
+#Mount the "cruncher"
+http_server.mount("/crunch", Burpdot::Crunch)
+
 trap("INT") {
   puts "Quitting..."
   http_server.stop
