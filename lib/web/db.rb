@@ -13,8 +13,6 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
       dbCount(req,res)
     elsif req.request_uri.to_s =~ /prettyul\.html/i
       prettyDb(req,res)
-    elsif req.request_uri.to_s =~ /getlinktosvg/i
-      getLinkToSvg(req,res)
     elsif req.request_uri.to_s =~ /prettyullite\.html/i
       prettyDbLite(req,res)
     elsif req.request_uri.to_s =~ /dbdumptocsv/i
@@ -28,12 +26,6 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
 
   alias :do_POST :do_GET
   
-  #This is a test - you can delete me later douche-man
-  def getLinkToSvg(req,res)
-    res.body = "/test.svg"
-    raise WEBrick::HTTPStatus::OK
-  end
-
   # /db/dbdumptocsv
   # needs a 'select' parameter, a comma separated list of URLs to query for
   def dbDumptoCsv(req,res)

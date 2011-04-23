@@ -29,11 +29,13 @@
 	</div>
 </div>
 <div id="jquerysvg"></div>
-<div style="position: relative;">
+<!--<div style="position: relative;">
 Zoom Level:<span id="zoomLevel"></span>&nbsp;X:<span id="xPosition"></span>&nbsp;Y:<span id="yPosition"></span>&nbsp;Width:<span id="width"></span>&nbsp;Height:<span id="height"></span>
-</div>
+</div>-->
 <script>
 $(document).ready(function() {
+	
+	//upon load, the first thing we do is build the tree
 	$.get("/db/prettyullite.html", function(data) {
 		//print out the data
 		$("#urltree").html(data);
@@ -221,11 +223,6 @@ $(document).ready(function() {
     zoomLevel = 1;
     //constructViewBox(1000);
   }
-
-	$("#testbutton").click(function() {
-		loadSVGJQuery();
-	});
-	
 	
 });
 </script>
