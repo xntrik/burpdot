@@ -16,6 +16,9 @@ require 'lib/web'
 require 'lib/import'
 require 'lib/output'
 
+depchecker = Burpdot::Depcheck.new
+depchecker.checkdeps
+
 Socket.do_not_reverse_lookup = true
 
 class OptsConsole
