@@ -3,11 +3,15 @@ module Burpdot
   class Depcheck
     
     def checkafterglow
-      if File.exists?("afterglow.pl")
-        return true
-      else
-        return false
+      return File.exists?("afterglow.pl")
+    end
+    
+    def checkgraphviz
+      gvexists = false
+      ENV['PATH'].split(':').each do |folder|
+        gvexists = true if File.exists?(folder+'/neato')
       end
+      return gvexists
     end
     
     def checkdeps
@@ -27,7 +31,17 @@ module Burpdot
         if !checkafterglow
           puts "You're missing Afterglow - please download Afterglow from http://afterglow.sourceforge.net/ and put afterglow.pl in Burpdot's folder"
           puts "Ensure you've installed Perl's Text::CSV module too! (try: cpan Text::CSV)"
+          if !checkgraphviz
+            puts
+            puts "You need to install Graphviz"
+          end
           exit
+        else
+          if !checkgraphviz
+            puts
+            puts "You need to install Graphviz"
+            exit
+          end
         end
       else
         #You're missing gems
@@ -38,6 +52,10 @@ module Burpdot
         if !checkafterglow
           puts "You're missing Afterglow - please download Afterglow from http://afterglow.sourceforge.net/ and put afterglow.pl in Burpdot's folder"
           puts "Ensure you've installed Perl's Text::CSV module too! (try: cpan Text::CSV)"
+        end
+        if !checkgraphviz
+          puts
+          puts "You need to install Graphviz"
         end
         exit
       end
