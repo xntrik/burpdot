@@ -4,6 +4,11 @@ $:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '.'))
 
 $root_dir = File.expand_path('..', __FILE__)
 
+require 'lib/web/depcheck'
+
+depchecker = Burpdot::Depcheck.new
+depchecker.checkdeps
+
 require 'rubygems'
 require 'webrick'
 #require 'dm-core'
@@ -15,9 +20,6 @@ require 'lib/configuration'
 require 'lib/web'
 require 'lib/import'
 require 'lib/output'
-
-depchecker = Burpdot::Depcheck.new
-depchecker.checkdeps
 
 Socket.do_not_reverse_lookup = true
 
