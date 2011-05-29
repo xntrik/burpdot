@@ -4,12 +4,12 @@ $:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '.'))
 
 $root_dir = File.expand_path('..', __FILE__)
 
+require 'rubygems'
 require 'lib/web/depcheck'
 
 depchecker = Burpdot::Depcheck.new
 depchecker.checkdeps
 
-require 'rubygems'
 require 'webrick'
 #require 'dm-core'
 #require 'dm-migrations'
