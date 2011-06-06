@@ -16,24 +16,29 @@
 <script src="/js/jquery.svg.min.noConflict.js"></script>
 <script src="/js/jquery.svganim.min.noConflict.js"></script>
 <script src="/js/jquery.mousewheel.min.js"></script>
+<script src="/js/jquery.blockUI.js"></script>
 
+<div id="urltreelink" style="display: none;"><a class="button" href="#">&nbsp;URLs&nbsp;</a></div>
 <div id="urltreeparent" style="display:none;">
-	<div id="urltreelink"><a href="#">URLs</a></div>
+	<span id="urltreechecknone"><a href="#">Check None</a></span> <span id="urltreecheckall"><a href="#">Check All</a></span><br /><br />
 	<div id="urltree" style="display: none;"></div>
-	<div id="urltreego">go</div>
 </div>
+<!--
 <div id="depthparent" style="display:none;">
 	<div id="depthlink"><a href="#">Depth</a></div>
 	<div id="depthcontent" style="display: none;">
 		<div id="testbutton">test</div>
 	</div>
-</div>
+</div>-->
+<div id="urltreego" style="display: none;"><a class="button" href="#">Render</a></div>
 <div id="jquerysvg"></div>
 <!--<div style="position: relative;">
 Zoom Level:<span id="zoomLevel"></span>&nbsp;X:<span id="xPosition"></span>&nbsp;Y:<span id="yPosition"></span>&nbsp;Width:<span id="width"></span>&nbsp;Height:<span id="height"></span>
 </div>-->
 <script>
 $(document).ready(function() {
+	
+	$.blockUI({ message: 'Loading...'});
 	
 	//upon load, the first thing we do is build the tree
 	$.get("/db/prettyullite.html", function(data) {
@@ -42,17 +47,31 @@ $(document).ready(function() {
 		$("#urltree").jstree({
 			"plugins" : [ "themes", "html_data", "checkbox", "types" ]
 		});
-		$("#urltreeparent").show();
+		//$("#urltreeparent").show();
+		$("#urltree").jstree("check_all");
+		$("#urltreego").show();
+		$("#urltreelink").show();
 		$("#depthparent").show();
+		$.unblockUI();
 
 	}, "html");
 
+	$("#urltreechecknone").click(function() {
+		$("#urltree").jstree("uncheck_all");
+	});
+	
+	$("#urltreecheckall").click(function() {
+		$("#urltree").jstree("check_all");
+	});
+	
 	$("#urltreelink").click(function() {
 		if ($("#urltree").is(':visible')) {
+			$("#urltreeparent").hide();
 			$("#urltree").slideUp(400,function() {
 				$("#urltreeparent").css("width","60px");
 				});
 		} else {
+			$("#urltreeparent").show();
 			$("#urltreeparent").css("width","600px");
 			$("#urltree").slideDown();
 		}
@@ -75,7 +94,10 @@ $(document).ready(function() {
 		//$.each($("#urltree").jstree("get_checked"), function(index,value) {
 		//	alert(value['type']);
 		//});
-		
+		$.blockUI({message: 'Rendering...'});
+		if ($("#urltree").is(':visible')) {
+			$("#urltreelink").click();
+		}
 		var datastring = $(".jstree-checked").map(function() {
 			if (this.id.length > 0) {
 				return this.id;
@@ -93,6 +115,7 @@ $(document).ready(function() {
 					url: "/crunch/csvtosvg.json",
 					success: function() { // now we load that svg file into the jQuery SVG object
 						loadSVGJQuery();
+						$.unblockUI();
 					}
 				});
 			}

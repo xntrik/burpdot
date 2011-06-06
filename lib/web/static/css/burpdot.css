@@ -9,15 +9,25 @@ body {
 	background-color: #fff;
 }
 
+#urltreelink {
+	position: relative;
+	top: 40px;
+	z-index: 510;
+}
+
 #urltreeparent {
 	position: relative;
 	width: 60px;
-	top: 40px;
+	top: 50px;
 	border: 1px dashed black;
 	z-index: 500;
 }
 #urltree {
 	position: relative;
+}
+#urltreego {
+	position: relative;
+	top: 50px;
 }
 
 #depthcontent {
@@ -27,14 +37,14 @@ body {
 #depthparent {
 	position: relative;
 	width: 60px;
-	top: 50px;
+	top: 200px;
 	border: 1px dashed black;
 	z-index: 500;
 }
 
 #jquerysvg {
 	position: absolute;
-	left: 80px;
+	left: 130px;
 	top: 35px;
 	width: 800px;
 	height: 600px;
