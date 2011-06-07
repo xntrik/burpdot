@@ -11,8 +11,6 @@ depchecker = Burpdot::Depcheck.new
 depchecker.checkdeps
 
 require 'webrick'
-#require 'dm-core'
-#require 'dm-migrations'
 require 'optparse'
 require 'parseconfig'
 
@@ -36,30 +34,19 @@ class OptsConsole
       opts.on("-h", "--help", "Show help") do |v|
         puts opts
         puts
-        puts "todo"
         exit
       end
 
-      opts.on("-i", "-i <burp log file>", "Input: The Burp Log File") do |i|
-        options['input'] = i
+      opts.on("-c", "-c <burpweb config file>", "Config: The burpdot web config file. Defaults to 'burpweb.cfg'") do |c|
+        options['cfg'] = c
       end
 
     end
       
     begin
       opts.parse!(args)
-#      if options['input'].nil? and options['version'].nil?
-#        puts
-#        puts "**Please specify an input file with the -i option**"
-#        puts
-#        puts opts
-#        exit
-#      end
-      
-#      options['overlap'] = "vpsc" if options['overlap'].nil? #Default overlap is orthoyx
-#      options['mode'] = 'dot' if options['mode'].nil? #Default output mode is dot
-#      options['truncate'] = 1 if options['mode'] == "dot" #Therefore, default mode is to truncate. i.e. incl \ns every 50 chars.
-#      options['depth'] = 2 if options['depth'].nil? #Defaults to 2
+
+      options['cfg'] = "burpweb.cfg" if options['cfg'].nil? #Default is to burpweb.cfg
 
     rescue OptionParser::InvalidOption
       puts "Invalid option, try -h for usage"
