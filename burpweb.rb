@@ -60,7 +60,7 @@ end
 options = OptsConsole.parse(ARGV)
 
 #Load the configuration file
-$config = Burpdot::Configuration.instance
+$config = Burpdot::Configuration.new(options['cfg'])
 
 if options['version']
   print verstring
