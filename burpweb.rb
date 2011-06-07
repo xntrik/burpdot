@@ -60,7 +60,7 @@ end
 options = OptsConsole.parse(ARGV)
 
 #Load the configuration file
-config = Burpdot::Configuration.instance
+$config = Burpdot::Configuration.instance
 
 if options['version']
   print verstring
@@ -69,8 +69,8 @@ end
 
 #Starting up the web interface
 httpconfig = {}
-httpconfig[:BindAddress] = config.get_value("burpip")
-httpconfig[:Port] = config.get_value("burpport")
+httpconfig[:BindAddress] = $config.get_value("burpip")
+httpconfig[:Port] = $config.get_value("burpport")
 httpconfig[:Logger] = WEBrick::Log.new($stdout, WEBrick::Log::DEBUG)
 httpconfig[:ServerName] = "BurpDot"
 httpconfig[:ServerSoftware] = "BurpDot"

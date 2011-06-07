@@ -5,8 +5,7 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
 
   def do_GET(req,res)
     require 'lib/sqlite'
-    @config = Burpdot::Configuration.instance
-    @sqlite = Burpdot::Sqlite.new($root_dir + "/" + @config.get_value('burpdbfile'))
+    @sqlite = Burpdot::Sqlite.new($root_dir + "/" + $config.get_value('burpdbfile'))
     @db = Burpdot::Models::Weblog
     
     if req.request_uri.to_s =~ /count\.json/i
@@ -36,7 +35,7 @@ class Db < WEBrick::HTTPServlet::AbstractServlet
     end
     
     # Open the output csv file
-    @oFile = File.new("#{$root_dir}/" + @config.get_value('burpdotcsv'), 'w')
+    @oFile = File.new("#{$root_dir}/" + $config.get_value('burpdotcsv'), 'w')
     
     @dbout.each do |entry|
       @oFile.syswrite(entry.ref + "," + entry.url + "\n") if entry.ref.length > 0

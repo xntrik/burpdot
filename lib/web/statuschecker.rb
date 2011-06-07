@@ -3,12 +3,11 @@ module Burpdot
 class StatusChecker < WEBrick::HTTPServlet::AbstractServlet
 
   def db_exists(req,res)
-    res.body = "{\"db_exists\": \"" + File::exists?($root_dir + "/" + @config.get_value('burpdbfile')).to_s + "\"}"
+    res.body = "{\"db_exists\": \"" + File::exists?($root_dir + "/" + $config.get_value('burpdbfile')).to_s + "\"}"
     raise WEBrick::HTTPStatus::OK
   end
   
   def do_GET(req,res)
-    @config = Burpdot::Configuration.instance
     if req.request_uri.to_s =~ /db_exists\.json/i
       db_exists(req,res)
     else
