@@ -21,6 +21,19 @@ require 'lib/output'
 
 Socket.do_not_reverse_lookup = true
 
+#Version and licensing gumpft
+verstring = "Version 0.5 - 7th of June, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring += "Copyright 2011 Christian Frichot\n\n"
+verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+verstring += "you may not use this file except in compliance with the License.\n"
+verstring += "You may obtain a copy of the License at\n\n"
+verstring += "\thttp://www.apache.org/licenses/LICENSE-2.0\n\n"
+verstring += "Unless required by applicable law or agreed to in writing, software\n"
+verstring += "distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+verstring += "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+verstring += "See the License for the specific language governing permissions and\n"
+verstring += "limitations under the License.\n"
+
 class OptsConsole
   def self.parse(args)
     options = {}
@@ -41,6 +54,10 @@ class OptsConsole
         options['cfg'] = c
       end
 
+      opts.on("-v", "--version", "Show version") do |v|
+        options['version'] = true
+      end
+      
     end
       
     begin
@@ -58,6 +75,11 @@ class OptsConsole
 end
 
 options = OptsConsole.parse(ARGV)
+
+if options['version']
+  print verstring
+  exit
+end
 
 #Load the configuration file
 $config = Burpdot::Configuration.new(options['cfg'])
