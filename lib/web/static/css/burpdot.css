@@ -1,0 +1,133 @@
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	background-image: url(/images/logo.jpg);
+	background-position: left top;
+	background-repeat: no-repeat;
+	background-color: #fff;
+}
+
+#urltreelink {
+	position: relative;
+	top: 40px;
+	width: 110px;
+	z-index: 510;
+}
+
+#urltreeparent {
+	position: relative;
+	width: 60px;
+	top: 50px;
+	border: 1px dashed black;
+	z-index: 500;
+	background: white;
+}
+#urltreeparent a:link, #urltreeparent a:visited {
+	color: black;
+	text-decoration: underline;
+}
+#urltreeparent a:hover, #urltreeparent a:active {
+	color: #71bddd;
+	text-decoration: underline;
+}
+#urltree {
+	position: relative;
+}
+#urltreego {
+	position: relative;
+	top: 50px;
+	width: 130px;
+}
+
+#depthcontent {
+	position: relative;
+}
+
+#depthparent {
+	position: relative;
+	width: 60px;
+	top: 200px;
+	border: 1px dashed black;
+	z-index: 500;
+}
+
+#jquerysvg {
+	position: absolute;
+	left: 130px;
+	top: 35px;
+	width: 800px;
+	height: 600px;
+	border: 1px solid #484;
+}
+
+.grab {cursor: all-scroll;}
+.grabbing {cursor: all-scroll;}
+
+#centeredcontent {
+	width: 300px;
+	height: 200px;
+	text-align: center;
+	/*border: 1px solid #000;*/
+	/*background-color: red;*/
+	/*color: #fff;*/
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -150px; 
+	/* Half the width of the DIV tag which is 50 pixels */
+	margin-top: -100px; 
+	/* Half the height of the DIV tag which is also 50 pixels */
+}
+
+#selectlog {
+	display: none;
+}
+
+/*From http://css3-buttons.heroku.com/generator#71BDDD*/
+
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+  border: none; }
+
+.button {
+  display: inline-block;
+  padding: 0.5em 2em 0.55em;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-radius: .5em;
+  border: solid 1px #cccccc;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  border: solid 1px #65b7da;
+  background-color: #71bddd;
+  background: -webkit-gradient(linear, left top, left bottom, from(#a6d6ea), to(#71bddd));
+  background: -moz-linear-gradient(top, #a6d6ea, #71bddd);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a6d6ea', endColorstr='#71bddd');
+  color: #f0f8fb; }
+  .button:hover {
+    text-decoration: none; }
+  .button:active {
+    position: relative;
+    top: 1px; }
+  .button:hover {
+    background-color: #5cb3d8;
+    background: -webkit-gradient(linear, left top, left bottom, from(#9ad0e7), to(#5cb3d8));
+    background: -moz-linear-gradient(top, #9ad0e7, #5cb3d8);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9ad0e7', endColorstr='#5cb3d8'); }
+  .button:active {
+    background-color: #9ad0e7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#71bddd), to(#9ad0e7));
+    background: -moz-linear-gradient(top, #71bddd, #9ad0e7);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#71bddd', endColorstr='#9ad0e7');
+    color: #d4ebf4; }

@@ -1,10 +1,15 @@
 #!/usr/bin/ruby
+
+$:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '.'))
+
+$root_dir = File.expand_path('..', __FILE__)
+
 require 'optparse'
 require 'lib/import'
 require 'lib/output'
 
 #Version and licensing gumpft
-verstring = "Version 0.4 - 7th of April, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring = "Version 0.5 - 7th of June, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
 verstring += "Copyright 2011 Christian Frichot\n\n"
 verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 verstring += "you may not use this file except in compliance with the License.\n"

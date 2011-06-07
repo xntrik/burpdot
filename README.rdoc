@@ -25,6 +25,30 @@ With the new "csv" mode you can pipe burpdot's output through afterglow into gra
 
 Because overlap settings aren't set by afterglow, I've specified them using the -G option. Afterglow requires the -t option because the CSV only has 2 columns instead of 3.
 
+= burpweb
+
+As of version 0.5, burpdot now has "burpweb", which is a web based interface to create (as long as the dependencies are there) graphics from burp log files.
+
+Some of the dependancies:
+
+  1) You'll need to download the excellent Afterglow tool from http://afterglow.sourceforge.net/ and copy the afterglow.pl file (located in afterglow/src/perl/graph) into burpdot's root folder
+  2) You'll also need to install Graphviz such that neato is in your PATH (if you install it properly it should be there already)
+  3) Get some gems into ya: parseconfig, dm-core, dm-migrations, dm-aggregates, dm-sqlite-adapter, builder
+
+Once you have all the dependancies it's simple to start:
+
+  ./burpweb.rb
+
+By default, burpweb will listen on 127.0.0.1:8015, but you can edit these options in burpweb.cfg
+
+For a quick demo see:
+
+  http://www.youtube.com/watch?v=rrBnAWE2fuw
+
+Known issues:
+
+  1. When you zoom on the visualisation (with the scroll wheel or click) you lose your position
+
 == Options
 
 Mode
@@ -79,6 +103,10 @@ This uses the vpsc overlap mode, which seems to be good at keeping the graphic t
 In both of the above examples I've set splines to true, which makes the lines weave and look a bit nicer, you can get rid of that option if you wish.
 
 == History
+
+Version 0.5 of burpdot, released on 7th of June 2011.
+ - Minor back end changes to import and sqlite output
+ - First release incorporating BurpWeb
 
 Version 0.4 of burpdot, released on 7th of April 2011.
  - The import methods now capture the verb (GET or POST)
