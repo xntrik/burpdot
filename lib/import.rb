@@ -67,14 +67,9 @@ class Import
         #Truncate the REF URL to just the domain, if depth is 1
         entry['ref'] = entry['ref'].match(/^([^\/]*)/i)[1] if options['depth'].to_i == 1 and not entry['ref'].nil?
           
-<<<<<<< HEAD
-          #Truncate the REF URL to exclude the parameters if depth is 2
-          entry['ref'] = entry['ref'].match(/^([^?]*)/i)[1] if options['depth'].to_i == 2 and not entry['ref'].nil?
-=======
         #Truncate the REF URL to exclude the parameters if depth is 2
         entry['ref'] = entry['ref'].match(/^([^?]*)/i)[1] if options['depth'].to_i == 2 and not entry['ref'].nil?
->>>>>>> wip
-          
+        
         #Now we truncate REF ref URL, if truncate is enabled, i.e., in dot mode
         entry['ref'] = entry['ref'].scan(/.{1,50}/).join('\n') if not options['truncate'].nil? and not entry['ref'].nil?
           
