@@ -65,8 +65,9 @@ When in "dot" mode, you can also set the -l option. The -l option, or Overlap mo
   http://www.graphviz.org/doc/info/attrs.html#d:overlap
 
 Depth
-You can specify the "depth" of data extracted from Burp's logs, setting the -d option to either 1, 2 or 3.
-Depth 1: Just extract domain information.
+You can specify the "depth" of data extracted from Burp's logs, setting the -d option to either 0, 1, 2 or 3.
+Depth 0: Just extract domain information.
+Depth 1: Extract domain and path information, excluding the file, so grouped by folders *New as of 0.5.1
 Depth 2: Extract domain and path information (this is the default setting if no depth is specified)
 Depth 3: Extract domain, path and query string information.
 
@@ -81,7 +82,7 @@ Depth 3: Extract domain, path and query string information.
 	    -o <output file>                 Output: The output file
 	    -m <mode>                        Mode: either dot, csv or sqlite. Defaults to dot
 	    -v, --version                    Show version
-	    -d, -d <depth>                   Depth: 1, 2 or 3. Defaults to 2
+	    -d, -d <depth>                   Depth: 0, 1, 2 or 3. Defaults to 2
 
 	Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'
 	See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information
@@ -103,6 +104,11 @@ This uses the vpsc overlap mode, which seems to be good at keeping the graphic t
 In both of the above examples I've set splines to true, which makes the lines weave and look a bit nicer, you can get rid of that option if you wish.
 
 == History
+
+Version 0.5.1 of burpdot, released on 10th of Auguest 2011.
+ - Minor revision to modify the depth settings
+   - You can now just list folders, excluding files. 
+   - Watch out if you were used to the old depth settings, these have changed slightly.
 
 Version 0.5 of burpdot, released on 7th of June 2011.
  - Minor back end changes to import and sqlite output

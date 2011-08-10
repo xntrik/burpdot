@@ -45,7 +45,8 @@ class Import
     
     #We open the file backwards, because this way we can build up the entry easier, in particular the referer
     options['input'].reverse.each do |line|
-      entry['ref'] = line.match(/^Referer: https?:\/\/([^ ]*)/i)[1].chomp if line =~ /^Referer:/i #Get the ref
+      entry['ref'] = line.match(/^Referer: (https?):\/\/([^ ]*)/i)[2].chomp if line =~ /^Referer:/i #Get the ref
+      entry['refproto'] = line.match(/^Referer: (https?):\/\//i)[1].chomp if line =~ /^Referer:/i #Get the refs protocol
       entry['host'] = line.match(/^Host: (.*)/i)[1].chomp if line =~ /^Host:/i #Get the host
       if line =~ /^(GET|POST) /i #At this point, we're at the top of that log entry, so wrap it up and put it in the array
 
@@ -55,8 +56,11 @@ class Import
         #Get the Verb
         entry['verb'] = line.match(/^(GET|POST)/i)[1] #For ver 0.4 we now get the VERB and store separately
           
-        #Truncate the URL to just the domain, if depth is 1
-        entry['url'] = "" if options['depth'].to_i == 1 and not entry['url'].nil?
+        #Truncate the URL to just the domain, if depth is 0 - this is new for 0.5.1
+        entry['url'] = "" if options['depth'].to_i == 0 and not entry['url'].nil?
+        
+        #Truncate the URL to exclude the file, just the folder, if depth is 1 - this is new since 0.5.1
+        entry['url'] = File.dirname(entry['url']) if options['depth'].to_i == 1 and not entry['url'].nil?
         
         #How about truncate the URL to exclude the parameters if depth is 2
         entry['url'] = entry['url'].match(/^([^?]*)/i)[1] if options['depth'].to_i == 2 and not entry['url'].nil?
@@ -64,8 +68,14 @@ class Import
         #Truncate the URL if truncate is enabled, i.e., in dot mode
         entry['url'] = entry['url'].scan(/.{1,50}/).join('\n') if not options['truncate'].nil? and not entry['url'].nil?
           
-        #Truncate the REF URL to just the domain, if depth is 1
-        entry['ref'] = entry['ref'].match(/^([^\/]*)/i)[1] if options['depth'].to_i == 1 and not entry['ref'].nil?
+        #Truncate the REF URL to just the domain, if depth is 0 - this is new for 0.5.1
+        entry['ref'] = entry['ref'].match(/^([^\/]*)/i)[1] if options['depth'].to_i == 0 and not entry['ref'].nil?
+        
+        #Truncate the REF URL to exclude the file, just the folder, if depth is 1 - this is new since 0.5.1
+        if options['depth'].to_i == 1 and not entry['ref'].nil? and not entry['refproto'].nil?
+          tmpurl = URI.parse(entry['refproto'] + "://" + entry['ref'])
+          entry['ref'] = tmpurl.host.to_s + File.dirname(tmpurl.path.to_s)
+        end
           
         #Truncate the REF URL to exclude the parameters if depth is 2
         entry['ref'] = entry['ref'].match(/^([^?]*)/i)[1] if options['depth'].to_i == 2 and not entry['ref'].nil?

@@ -5,6 +5,7 @@ $:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '.'))
 $root_dir = File.expand_path('..', __FILE__)
 
 require 'optparse'
+require 'uri'
 require 'lib/import'
 require 'lib/output'
 
@@ -61,7 +62,7 @@ class OptsConsole
         options['version'] = true
       end
       
-      opts.on("-d", "-d <depth>", "Depth: 1, 2 or 3. Defaults to 2") do |d|
+      opts.on("-d", "-d <depth>", "Depth: 0, 1, 2 or 3. Defaults to 2") do |d|
         options['depth'] = d
       end
 
