@@ -22,7 +22,7 @@ require 'lib/output'
 Socket.do_not_reverse_lookup = true
 
 #Version and licensing gumpft
-verstring = "Version 0.5 - 7th of June, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
+verstring = "Version 0.5.1 - 10th of August, 2011 - Created by Christian \"xntrik\" Frichot.\n\n"
 verstring += "Copyright 2011 Christian Frichot\n\n"
 verstring += "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 verstring += "you may not use this file except in compliance with the License.\n"
