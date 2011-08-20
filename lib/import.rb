@@ -45,13 +45,17 @@ class Import
     
     #We open the file backwards, because this way we can build up the entry easier, in particular the referer
     options['input'].reverse.each do |line|
-      entry['ref'] = line.match(/^Referer: (https?):\/\/([^ ]*)/i)[2].chomp if line =~ /^Referer:/i #Get the ref
-      entry['refproto'] = line.match(/^Referer: (https?):\/\//i)[1].chomp if line =~ /^Referer:/i #Get the refs protocol
+      entry['ref'] = line.match(/^Referer: (https?):\/\/([^ ]*)/i)[2].chomp if line =~ /^Referer: https?:\/\//i #Get the ref
+      entry['refproto'] = line.match(/^Referer: (https?):\/\//i)[1].chomp if line =~ /^Referer: https?:\/\//i #Get the refs protocol
       entry['host'] = line.match(/^Host: (.*)/i)[1].chomp if line =~ /^Host:/i #Get the host
       if line =~ /^(GET|POST) /i #At this point, we're at the top of that log entry, so wrap it up and put it in the array
 
         #Get the URL
-        entry['url'] = line.match(/^(GET|POST) ([^ ]*)/i)[2]
+        entry['url'] = line.match(/^(GET|POST) (https?:\/\/#{entry['host']})?([^ ]*)/i)[3]
+
+        #Tidy the URL sometimes the GET request includes the domain without the protocol - whu?
+        #puts entry['url']
+        #entry['url'] = line.match(/^(#{entry['host']})\/(.*)/i)[2] if entry['url'] =~ /^(#{entry['host']})\/(.*)/i
           
         #Get the Verb
         entry['verb'] = line.match(/^(GET|POST)/i)[1] #For ver 0.4 we now get the VERB and store separately
@@ -73,6 +77,7 @@ class Import
         
         #Truncate the REF URL to exclude the file, just the folder, if depth is 1 - this is new since 0.5.1
         if options['depth'].to_i == 1 and not entry['ref'].nil? and not entry['refproto'].nil?
+          entry['ref'] = entry['ref'].match(/^([^?]*)/i)[1] #For some reason, URI parse sometimes dies on strings with params.
           tmpurl = URI.parse(entry['refproto'] + "://" + entry['ref'])
           entry['ref'] = tmpurl.host.to_s + File.dirname(tmpurl.path.to_s)
         end

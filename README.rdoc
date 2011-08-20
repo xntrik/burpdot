@@ -51,20 +51,24 @@ Known issues:
 
 == Options
 
-Mode
+=== Mode
+
 Burpdot now has 3 primary modes of operation, either output in DOT syntax (with very limited formatting), or output in a "ref,url" CSV format, or output the data into a SQLite DB file. CSV mode is particular important for parsing these files with Afterglow. Mode is specified by the -m option. By default the option is "dot", but if you specify "csv" then a CSV is either printed to the screen or saved to a file (with the -o option), or "sqlite" (If you use sqlite, you MUST specify an output file with the -o option). If the mode is set to CSV then the overlap option (-l) is ignored. You can download and read more about Afterglow here:
 
   http://afterglow.sourceforge.net/
 
-Output
+=== Output
+
 If you don't specify an -o option, burpdot will simply print the output to screen. This allows you to quickly confirm that it contains data you want, or perhaps you want to pipe it through another command line tool, such as Afterglow.
 
-Overlap
+=== Overlap
+
 When in "dot" mode, you can also set the -l option. The -l option, or Overlap mode, specifies the Graphviz method for ensuring that nodes within the visualisation do not overlap. By default, the dot file is set for orthoyx, which means that overlaps are moved by optimizing two constraint problems, one for the y axis and one for the x. There are other options available for overlap removal, which you can review here:
 
   http://www.graphviz.org/doc/info/attrs.html#d:overlap
 
-Depth
+=== Depth
+
 You can specify the "depth" of data extracted from Burp's logs, setting the -d option to either 0, 1, 2 or 3.
 Depth 0: Just extract domain information.
 Depth 1: Extract domain and path information, excluding the file, so grouped by folders *New as of 0.5.1
@@ -73,21 +77,21 @@ Depth 3: Extract domain, path and query string information.
 
 == Usage
 
-	Usage: ./burpdot.rb [options]
+   Usage: ./burpdot.rb [options]
 
-	Specific Options:
-	    -h, --help                       Show help
-	    -i <burp log file>               Input: The Burp Log File
-	    -l <overlap mode>                Overlap: DOT file overlap mode. Defaults to 'orthoyx'
-	    -o <output file>                 Output: The output file
-	    -m <mode>                        Mode: either dot, csv or sqlite. Defaults to dot
-	    -v, --version                    Show version
-	    -d, -d <depth>                   Depth: 0, 1, 2 or 3. Defaults to 2
+   Specific Options:
+      -h, --help                       Show help
+      -i <burp log file>               Input: The Burp Log File
+      -l <overlap mode>                Overlap: DOT file overlap mode. Defaults to 'orthoyx'
+      -o <output file>                 Output: The output file
+      -m <mode>                        Mode: either dot, csv or sqlite. Defaults to dot
+      -v, --version                    Show version
+      -d, -d <depth>                   Depth: 0, 1, 2 or 3. Defaults to 2
 
-	Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'
-	See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information
+   Example Overlap modes: 'scale', 'prism', 'vpsc', 'orthoyx'
+   See http://www.graphviz.org/doc/info/attrs.html#d:overlap for more information
 
-	Overlap is only used in "dot" mode.
+   Overlap is only used in "dot" mode.
 	
 == Graphviz Tips
 
@@ -105,7 +109,12 @@ In both of the above examples I've set splines to true, which makes the lines we
 
 == History
 
-Version 0.5.1 of burpdot, released on 10th of Auguest 2011.
+Version 0.5.2 of burpdot, released on 20th of August 2011.
+ - Minor revision to handle referrers a little bit better
+ - Also now defaults to depth 1 for burpweb
+ - NB: Burpweb doesn't seem to work nice with Ruby 1.9, so at this point we recommend running Burpdot and Burpweb with Ruby 1.8
+
+Version 0.5.1 of burpdot, released on 10th of August 2011.
  - Minor revision to modify the depth settings
    - You can now just list folders, excluding files. 
    - Watch out if you were used to the old depth settings, these have changed slightly.

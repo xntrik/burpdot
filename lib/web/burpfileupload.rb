@@ -5,7 +5,7 @@ class WebBurpFileUpload < WEBrick::HTTPServlet::AbstractServlet
     filedata = req.query["logfile"]
     
     options = {}
-    options['depth'] = 2
+    options['depth'] = 1
     options['input'] = filedata.split("\n")
     options['output'] = $config.get_value('burpdbfile')
     output = Burpdot::Import.importburpbase(options)
